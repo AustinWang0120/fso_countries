@@ -18,7 +18,11 @@ const CountryInformation = ({country}) => {
   )
 }
 
-const CountriesList = ({countries}) => {
+const CountriesList = ({countries, setFilter}) => {
+  const showOneAmongMany = (name) => {
+    setFilter(name)
+  }
+  
   if (countries.length > 10) {
     return (
       <div>
@@ -29,7 +33,10 @@ const CountriesList = ({countries}) => {
     return (
       <ul>
         {countries.map((country) => (
-          <li key={country.cca2}>{country.name.common}</li>
+          <li key={country.cca2}>
+            {country.name.common}
+            <button onClick={() => {showOneAmongMany(country.name.common)}}>show</button>
+          </li>
         ))}
       </ul>
     )
@@ -46,6 +53,16 @@ const CountriesList = ({countries}) => {
   }
 }
 
+const SearchBar = ({filter, setFilter}) => {
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value)
+  }
+
+  return (
+    <input value={filter} onChange={handleFilterChange} />
+  )
+}
+
 const App = () => {
   const [countries, setCountries] = useState([])
   const [filter, setFilter] = useState("")
@@ -58,16 +75,12 @@ const App = () => {
       })
   }, [])
 
-  const handleFilterChange = (event) => {
-    setFilter(event.target.value)
-  }
-
   const countryCandidates = countries.filter((country) => (country.name.common.toLowerCase().includes(filter.toLowerCase())))
 
   return (
     <div>
-      find countries<input value={filter} onChange={handleFilterChange} />
-      <CountriesList countries={countryCandidates} />
+      find countries<SearchBar filter={filter} setFilter={setFilter} />
+      <CountriesList countries={countryCandidates} setFilter={setFilter} />
     </div>
   )
 }
