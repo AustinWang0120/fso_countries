@@ -1,5 +1,30 @@
 import { useEffect, useState } from "react"
 import countryService from "./services/countries"
+import weatherService from "./services/weather"
+
+const WeatherInformation = ({country}) => {
+  const [weatherInfo, setWeatherInfo] = useState(null)
+
+  useEffect(() => {
+    weatherService
+      .getInfo(country.capitalInfo.latlng[0], country.capitalInfo.latlng[1])
+      .then((info) => {
+        setWeatherInfo(info)
+      })
+  }, [country.capitalInfo.latlng])
+
+  if (weatherInfo === null) {
+    return null
+  }
+  
+  return (
+    <div>
+      <h2>Weather in {country.capital[0]}</h2>
+      <p>temperature: {weatherInfo.main.temp}</p>
+      <p>wind: {weatherInfo.wind.speed} m/s</p>
+    </div>
+  )
+}
 
 const CountryInformation = ({country}) => {
   return (
@@ -14,6 +39,7 @@ const CountryInformation = ({country}) => {
         ))}
       </ul>
       <img src={country.flags.png} alt="flag" />
+      <WeatherInformation country={country} />
     </div>
   )
 }
