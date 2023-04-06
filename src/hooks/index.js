@@ -11,7 +11,13 @@ export const useCountry = (name) => {
       setLoading(true)
       countryService
         .getOneCountry(name)
-        .then(data => setCountryData(data[0]))
+        .then(data => {
+          if (data.status) {
+            throw new Error(`Error: ${data.message}`)
+          } else {
+            setCountryData(data[0])
+          }
+        })
         .catch(error => setError(error.message))
         .finally(() => setLoading(false))
     }
